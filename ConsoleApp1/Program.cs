@@ -8,6 +8,7 @@ namespace ConsoleApp1
         static void Main(string[] args)
         {
             DBMethods dbmethod = new DBMethods();
+            //new comment 
             Console.WriteLine("Please enter the command. 1 - to SELECT, 2 - to INSERT 3 - to UPDATE 4 - to DELETE");
             int userCommand = Convert.ToInt32(Console.ReadLine());
             switch (userCommand)
