@@ -9,7 +9,7 @@ namespace ConsoleApp1
         {
             DBMethods dbmethod = new DBMethods();
             //new comment 
-            Console.WriteLine("Please enter the command. 1 - to SELECT, 2 - to INSERT 3 - to UPDATE 4 - to DELETE");
+            Console.WriteLine("Please enter the command. 1 - to SELECT, 2 - to INSERT 3 - to UPDATE 4 - to DELETE  5 - Select left join");
             int userCommand = Convert.ToInt32(Console.ReadLine());
             switch (userCommand)
             {
@@ -22,16 +22,19 @@ namespace ConsoleApp1
                 case 3:
                     dbmethod.Update();
                     break;
-                 case 4:
+                case 4:
                     dbmethod.Delete();
                     break;
-            } 
-                           
-        } 
+                case 5:
+                    dbmethod.SelectFromBothTables();
+                    break;
+            }
+
+        }
     }
     class DBMethods
     {
-       private string connectionString = @"Data source = C:\Users\Натали\Documents\Author_Book1.db";
+        private string connectionString = @"Data source = C:\Users\Натали\Documents\Author_Book1.db";
         public void Select()
         {
             using var con = new SQLiteConnection(connectionString);
@@ -39,13 +42,12 @@ namespace ConsoleApp1
             string stm = "SELECT * FROM BookNew";
             using var cmd = new SQLiteCommand(stm, con);
             using SQLiteDataReader rdr = cmd.ExecuteReader();
-            Console.WriteLine($"{rdr.GetName(0),-3} {rdr.GetName(1),-8} {rdr.GetName(2),8}");
-
+            Console.WriteLine($"{rdr.GetName(0)} {rdr.GetName(1)} {rdr.GetName(2)}");
             while (rdr.Read())
             {
-                Console.WriteLine($@"{rdr.GetInt32(0),-3} {rdr.GetString(1),-8}");
+                Console.WriteLine($@"{rdr.GetInt32(0)} {rdr.GetString(1)} {rdr.GetString(2)}");
             }
-      }
+        }
         public void Insert()
         {
             using var con = new SQLiteConnection(connectionString);
@@ -76,7 +78,7 @@ namespace ConsoleApp1
             int number = cmd.ExecuteNonQuery();
             Console.WriteLine("Обновлено объектов: {0}", number);
         }
-         public void Delete()
+        public void Delete()
         {
             using var con = new SQLiteConnection(connectionString);
             con.Open();
@@ -87,8 +89,26 @@ namespace ConsoleApp1
             int number = cmd.ExecuteNonQuery();
             Console.WriteLine("Удалено объектов: {0}", number);
         }
-    }
-}
+        public void SelectFromBothTables() 
+        {
+            using var con = new SQLiteConnection(connectionString);
+            con.Open();
+            string stm = "SELECT * FROM BookNew b LEFT JOIN auth_book ab on b.id = ab.books_id LEFT JOIN Author a on auth_id =  author_id";
+            using var cmd = new SQLiteCommand(stm, con);
+            using SQLiteDataReader rdr = cmd.ExecuteReader();
+            Console.WriteLine($"{rdr.GetName(0)} {rdr.GetName(1)} {rdr.GetName(2)}");
+            Console.WriteLine($"{rdr.GetName(6)} {rdr.GetName(7)} ");
+            while (rdr.Read())
+            {
+                Console.WriteLine($@"{rdr.GetInt32(0)} {rdr.GetString(1)} {rdr.GetString(2)} ");
 
+                Console.WriteLine($@"{rdr.GetString(6)} {rdr.GetString(7)}");
+                
+
+            }
+        }
+    }
+
+}
 
 
