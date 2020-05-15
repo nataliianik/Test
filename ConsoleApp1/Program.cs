@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Data.SQLite;
 
 namespace ConsoleApp1
@@ -8,8 +9,8 @@ namespace ConsoleApp1
         static void Main(string[] args)
         {
             DBMethods dbmethod = new DBMethods();
-            //new comment 
-            Console.WriteLine("Please enter the command. 1 - to SELECT, 2 - to INSERT 3 - to UPDATE 4 - to DELETE  5 - Select left join");
+            //new comment
+            Console.WriteLine("Please enter the command. 1 - to SELECT, 2 - to INSERT 3 - to UPDATE 4 - to DELETE  5 - Select book with author ");
             int userCommand = Convert.ToInt32(Console.ReadLine());
             switch (userCommand)
             {
@@ -68,7 +69,7 @@ namespace ConsoleApp1
             using var con = new SQLiteConnection(connectionString);
             con.Open();
             using var cmd = new SQLiteCommand(con);
-            Console.WriteLine("Please enter id to update");
+            Console.WriteLine("Please enter book id to update");
             int id = Convert.ToInt32(Console.ReadLine());
             Console.WriteLine("Please enter new name");
             string name = Console.ReadLine();
@@ -83,32 +84,49 @@ namespace ConsoleApp1
             using var con = new SQLiteConnection(connectionString);
             con.Open();
             using var cmd = new SQLiteCommand(con);
-            Console.WriteLine("Please enter id to delete");
+            Console.WriteLine("Please enter book id to delete");
             int id = Convert.ToInt32(Console.ReadLine());
             cmd.CommandText = String.Format("DELETE  FROM BookNew WHERE id='{0}'", id);
             int number = cmd.ExecuteNonQuery();
             Console.WriteLine("Удалено объектов: {0}", number);
         }
-        public void SelectFromBothTables() 
+        public void SelectFromBothTables()
         {
             using var con = new SQLiteConnection(connectionString);
             con.Open();
             string stm = "SELECT * FROM BookNew b LEFT JOIN auth_book ab on b.id = ab.books_id LEFT JOIN Author a on auth_id =  author_id";
             using var cmd = new SQLiteCommand(stm, con);
-            using SQLiteDataReader rdr = cmd.ExecuteReader();
-            Console.WriteLine($"{rdr.GetName(0)} {rdr.GetName(1)} {rdr.GetName(2)}");
-            Console.WriteLine($"{rdr.GetName(6)} {rdr.GetName(7)} ");
-            while (rdr.Read())
+            try
             {
-                Console.WriteLine($@"{rdr.GetInt32(0)} {rdr.GetString(1)} {rdr.GetString(2)} ");
+                using SQLiteDataReader rdr = cmd.ExecuteReader();
+                int fieldCount = rdr.FieldCount;
+                Console.WriteLine($"{rdr.GetName(0)} {rdr.GetName(1)} {rdr.GetName(2)}");
+                Console.WriteLine($"{rdr.GetName(6)} {rdr.GetName(7)} ");
 
-                Console.WriteLine($@"{rdr.GetString(6)} {rdr.GetString(7)}");
-                
-
+                for (int i = 0; i < fieldCount; i++)
+                {
+                    while (rdr.Read())
+                    {
+                     Console.WriteLine($@"{rdr.GetInt32(0)} {rdr.GetString(1)} {rdr.GetString(2)} ");
+                     Console.WriteLine($@"{rdr.GetString(6)} {rdr.GetString(7)}");
+                        
+                    }
+                }
+            }
+            catch (InvalidCastException e) //here is a line to catch exception 
+            {
+                Console.WriteLine(e);
+            }
+            finally
+            {
+                con.Close();
             }
         }
     }
-
 }
 
+
+
+          
+ 
 
