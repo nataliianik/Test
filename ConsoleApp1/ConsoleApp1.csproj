@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="Devart.Data.SQLite" Version="5.15.1612" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.8.1" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.112.2" />
   </ItemGroup>
 
